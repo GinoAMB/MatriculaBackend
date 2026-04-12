@@ -34,6 +34,7 @@ public class JwtSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",
+                                "/api/documento/**",
                                 "/api/rol/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",

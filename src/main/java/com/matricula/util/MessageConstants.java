@@ -12,4 +12,8 @@ public class MessageConstants {
         public static final String NOT_FOUND = "Rol no encontrado";
         public static final String ALREADY_EXISTS = "El rol ya existe";
     }
+
+    public static class Documento {
+        public static final String ALREADY_EXISTS = "El documento ya existe";
+    }
 }

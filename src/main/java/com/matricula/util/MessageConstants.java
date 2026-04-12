@@ -16,4 +16,8 @@ public class MessageConstants {
     public static class Documento {
         public static final String ALREADY_EXISTS = "El documento ya existe";
     }
+
+    public static class EstadoMatricula {
+        public static final String ALREADY_EXISTS = "El estado ya existe";
+    }
 }

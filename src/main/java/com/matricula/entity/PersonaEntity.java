@@ -53,8 +53,6 @@ public class PersonaEntity {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
-    // 🔥 Relaciones
-
     @ManyToOne
     @JoinColumn(name = "id_tipo")
     private DocumentoEntity tipoDocumento;

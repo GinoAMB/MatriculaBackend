@@ -20,4 +20,8 @@ public class MessageConstants {
     public static class Pais {
         public static final String ALREADY_EXISTS = "El Pais ya existe";
     }
+
+    public static class Religion {
+        public static final String ALREADY_EXISTS = "La Religion ya existe";
+    }
 }

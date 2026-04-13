@@ -36,6 +36,7 @@ public class JwtSecurityConfig {
                                 "/api/auth/**",
                                 "/api/estadoMatricula/**",
                                 "/api/pais/**",
+                                "/api/religion/**",
                                 "/api/documento/**",
                                 "/api/rol/**",
                                 "/v3/api-docs/**",

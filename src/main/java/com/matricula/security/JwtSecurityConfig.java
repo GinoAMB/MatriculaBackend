@@ -35,6 +35,7 @@ public class JwtSecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/estadoMatricula/**",
+                                "/api/pais/**",
                                 "/api/documento/**",
                                 "/api/rol/**",
                                 "/v3/api-docs/**",

@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -30,6 +32,16 @@ public class UsuarioController {
         UsuarioResponseDTO response = usuarioService.register(request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Lista de usuarios",
+            description = "Obtiene todos los usuarios registrados"
+    )
+    @GetMapping("/lista")
+    public ResponseEntity<List<UsuarioResponseDTO>> list(){
+        List<UsuarioResponseDTO> usuarios = usuarioService.list();
+        return ResponseEntity.ok(usuarios);
     }
 
     // LOGIN (devuelve JWT + datos)

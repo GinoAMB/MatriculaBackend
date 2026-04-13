@@ -21,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
@@ -95,6 +97,14 @@ public class UsuarioServiceImpl implements UsuarioService {
                 usuario.getRol().getNombre(),
                 token
         );
+    }
+
+    @Override
+    public List<UsuarioResponseDTO> list() {
+        List<UsuarioEntity> usuarios = usuarioRepository.findAll();
+        return usuarios.stream()
+                .map(usuarioMapper::toResponseDTO)
+                .toList();
     }
 
 }

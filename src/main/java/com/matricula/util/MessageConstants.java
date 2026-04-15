@@ -6,6 +6,7 @@ public class MessageConstants {
         public static final String EMAIL_EXISTS = "El correo ya existe";
         public static final String INVALID_CREDENTIALS = "Credenciales inválidas";
         public static final String INACTIVE = "El usuario está inactivo";
+        public static final String NOT_FOUND_OR_INACTIVE = "El correo no está registrado o el usuario está inactivo";
     }
 
     public static class Rol {
@@ -27,5 +28,10 @@ public class MessageConstants {
 
     public static class PeriodoEscolar {
         public static final String ALREADY_EXISTS = "El periodo escolar ya existe";
+    }
+
+    public static class Token {
+        public static final String INVALID = "Token inválido";
+        public static final String EXPIRED = "Token expirado";
     }
 }

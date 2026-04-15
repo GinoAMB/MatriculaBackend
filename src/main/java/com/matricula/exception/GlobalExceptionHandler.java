@@ -40,6 +40,18 @@ public class GlobalExceptionHandler {
         return buildResponse(ex.getMessage(), null, HttpStatus.NOT_FOUND);
     }
 
+    // CONFLICT
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex) {
+        return buildResponse(ex.getMessage(), null, HttpStatus.CONFLICT);
+    }
+
+    // FORBIDDEN
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenException ex) {
+        return buildResponse(ex.getMessage(), null, HttpStatus.FORBIDDEN);
+    }
+
     // UNAUTHORIZED
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException ex) {

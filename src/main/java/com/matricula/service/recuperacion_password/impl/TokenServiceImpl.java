@@ -6,10 +6,13 @@ import com.matricula.dto.recuperacion_password.RecuperacionResponseDTO;
 import com.matricula.dto.recuperacion_password.ValidarTokenDTO;
 import com.matricula.entity.RecuperacionContrasenaEntity;
 import com.matricula.entity.UsuarioEntity;
+import com.matricula.exception.BadRequestException;
+import com.matricula.exception.NotFoundException;
 import com.matricula.repository.TokenRepository;
 import com.matricula.repository.UsuarioRepository;
 import com.matricula.service.email.EmailService;
 import com.matricula.service.recuperacion_password.TokenService;
+import com.matricula.util.MessageConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,7 +35,7 @@ public class TokenServiceImpl implements TokenService {
     public RecuperacionResponseDTO solicitarRecuperacion(RecuperacionRequestDTO request) {
 
         UsuarioEntity usuario = usuarioRepository.findByCorreoAndEstadoTrue(request.correo())
-                .orElseThrow(() -> new RuntimeException("El correo no está registrado o el usuario está inactivo"));
+                .orElseThrow(() -> new NotFoundException(MessageConstants.Usuario.NOT_FOUND_OR_INACTIVE));
 
 
         String tokenValue = UUID.randomUUID().toString();
@@ -70,17 +73,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public RecuperacionResponseDTO validarToken(ValidarTokenDTO request) {
 
-        RecuperacionContrasenaEntity token = tokenRepository
-                .findByTokenAndUsadoFalse(request.token())
-                .orElse(null);
-
-        if (token == null) {
-            return new RecuperacionResponseDTO("Token inválido", false);
-        }
-
-        if (token.getExpiracion().isBefore(LocalDateTime.now())) {
-            return new RecuperacionResponseDTO("Token expirado", false);
-        }
+        validarTokenInterno(request.token());
 
         return new RecuperacionResponseDTO("Token válido", true);
     }
@@ -88,17 +81,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public RecuperacionResponseDTO cambiarPassword(CambiarPasswordDTO request) {
 
-        RecuperacionContrasenaEntity token = tokenRepository
-                .findByTokenAndUsadoFalse(request.token())
-                .orElse(null);
-
-        if (token == null) {
-            return new RecuperacionResponseDTO("Token inválido", false);
-        }
-
-        if (token.getExpiracion().isBefore(LocalDateTime.now())) {
-            return new RecuperacionResponseDTO("Token expirado", false);
-        }
+        RecuperacionContrasenaEntity token = validarTokenInterno(request.token());
 
         UsuarioEntity usuario = token.getUsuario();
 
@@ -110,5 +93,20 @@ public class TokenServiceImpl implements TokenService {
         tokenRepository.save(token);
 
         return new RecuperacionResponseDTO("Contraseña actualizada correctamente", true);
+    }
+
+    private RecuperacionContrasenaEntity validarTokenInterno(String tokenValue) {
+
+        RecuperacionContrasenaEntity token = tokenRepository
+                .findByTokenAndUsadoFalse(tokenValue)
+                .orElseThrow(() -> new BadRequestException(
+                        MessageConstants.Token.INVALID
+                ));
+
+        if (token.getExpiracion().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException(MessageConstants.Token.EXPIRED);
+        }
+
+        return token;
     }
 }

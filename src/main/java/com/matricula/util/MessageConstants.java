@@ -34,4 +34,17 @@ public class MessageConstants {
         public static final String INVALID = "Token inválido";
         public static final String EXPIRED = "Token expirado";
     }
+
+    public static class Nivel {
+        public static final String NOT_FOUND = "Nivel no encontrado";
+    }
+
+    public static class Grado {
+        public static final String NOT_FOUND = "Grado no encontrado";
+        public static final String INVALID_NIVEL = "El grado no pertenece al nivel especificado";
+    }
+
+    public static class Seccion {
+        public static final String ALREADY_EXISTS = "La sección ya existe en ese grado";
+    }
 }

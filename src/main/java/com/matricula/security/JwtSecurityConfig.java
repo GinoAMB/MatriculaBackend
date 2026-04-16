@@ -38,6 +38,7 @@ public class JwtSecurityConfig {
                                 "/api/pais/**",
                                 "/api/religion/**",
                                 "/api/documento/**",
+                                "/api/tipo-relacion/**",
                                 "/api/recuperacion/**",
                                 "/api/academico/**",
                                 "/api/periodo-escolar/**",

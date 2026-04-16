@@ -47,4 +47,8 @@ public class MessageConstants {
     public static class Seccion {
         public static final String ALREADY_EXISTS = "La sección ya existe en ese grado";
     }
+
+    public static class TipoRelacion {
+        public static final String ALREADY_EXISTS = "El tipo de ralción ya existe";
+    }
 }

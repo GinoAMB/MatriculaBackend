@@ -53,6 +53,9 @@ public class PersonaEntity {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
+    @Column(name = "celular")
+    private String celular;
+
     @ManyToOne
     @JoinColumn(name = "id_tipo")
     private DocumentoEntity tipoDocumento;

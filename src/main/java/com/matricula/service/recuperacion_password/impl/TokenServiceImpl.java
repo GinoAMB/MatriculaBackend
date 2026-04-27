@@ -14,6 +14,7 @@ import com.matricula.service.email.EmailService;
 import com.matricula.service.recuperacion_password.TokenService;
 import com.matricula.util.MessageConstants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,9 @@ public class TokenServiceImpl implements TokenService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+
+    @Value("${cors.allowed-origins}")
+    private String frontendUrl;
 
     @Transactional
     @Override
@@ -55,15 +59,23 @@ public class TokenServiceImpl implements TokenService {
 
         String asunto = "Recuperación de contraseña";
 
+
+        String url = frontendUrl + "/reset-password?token=" + tokenValue;
+
         String cuerpo = """
         <div style="font-family:Arial; padding:20px;">
             <h2>Recuperación de contraseña</h2>
             <p>Hola <b>%s</b>,</p>
-            <p>Usa el siguiente token para cambiar tu contraseña:</p>
-            <h3 style="background:#eee; padding:10px;">%s</h3>
-            <p>Este token expira en 30 minutos.</p>
+            <p>Haz clic en el siguiente enlace para cambiar tu contraseña:</p>
+        
+            <a href="%s" 
+               style="display:inline-block; padding:10px 20px; background:#4CAF50; color:white; text-decoration:none; border-radius:5px;">
+               Cambiar contraseña
+            </a>
+        
+            <p>Este enlace expira en 30 minutos.</p>
         </div>
-        """.formatted(nombre, tokenValue);
+        """.formatted(nombre, url);
 
         emailService.enviarCorreo(usuario.getCorreo(), asunto, cuerpo);
 

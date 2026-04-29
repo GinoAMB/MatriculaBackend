@@ -18,7 +18,6 @@ public class OpenApiConfig {
                 .info(new Info().title("MATRICULA")
                         .version("1.0")
                         .description("API para sistema de matricula"))
-                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new io.swagger.v3.oas.models.Components()
                         .addSecuritySchemes(securitySchemeName,
                                 new SecurityScheme()

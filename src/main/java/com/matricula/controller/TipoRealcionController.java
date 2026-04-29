@@ -4,11 +4,13 @@ import com.matricula.dto.tipo_relacion.TipoRequestDTO;
 import com.matricula.dto.tipo_relacion.TipoResponseDTO;
 import com.matricula.service.tipo_relacion.TipoRelacionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +27,8 @@ public class TipoRealcionController {
             summary = "Registrar un nuevo tipo de relación",
             description = "Crea un nuevo tipo de relación en el sistema"
     )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/register")
     public ResponseEntity<TipoResponseDTO> register(@RequestBody @Valid TipoRequestDTO requestDTO){
         TipoResponseDTO responseDTO = tipoRelacionService.register(requestDTO);
@@ -35,6 +39,8 @@ public class TipoRealcionController {
             summary = "Listar tipos de relación",
             description = "Obtiene todos los tipos de relación registrados"
     )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<TipoResponseDTO>> list(){
         List<TipoResponseDTO> tipoResponseDTOS = tipoRelacionService.list();

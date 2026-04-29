@@ -4,11 +4,13 @@ import com.matricula.dto.pais.PaisRequestDTO;
 import com.matricula.dto.pais.PaisResponseDTO;
 import com.matricula.service.pais.PaisService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +27,8 @@ public class PaisController {
             summary = "Registrar un nuevo país",
             description = "Crea un nuevo país en el sistema"
     )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/register")
     public ResponseEntity<PaisResponseDTO> register(@RequestBody @Valid PaisRequestDTO requestDTO){
         PaisResponseDTO responseDTO = paisService.register(requestDTO);
@@ -35,6 +39,8 @@ public class PaisController {
             summary = "Lista de países",
             description = "Obtiene todos los países registrados"
     )
+    @PreAuthorize("hasRole('ADMIN', 'DIRECTIVO', 'APOYO')")
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<PaisResponseDTO>> list(){
         List<PaisResponseDTO> paisResponseDTOS = paisService.list();

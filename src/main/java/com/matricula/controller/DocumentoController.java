@@ -4,11 +4,13 @@ import com.matricula.dto.documento.DocumentoRequestDTO;
 import com.matricula.dto.documento.DocumentoResponseDTO;
 import com.matricula.service.documento.DocumentoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +27,8 @@ public class DocumentoController {
             summary = "Registrar un nuevo tipo de documento",
             description = "Crea un nuevo tipo de documento en el sistema"
     )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/register")
     public ResponseEntity<DocumentoResponseDTO> register(@RequestBody @Valid DocumentoRequestDTO requestDTO){
         DocumentoResponseDTO responseDTO = documentoService.register(requestDTO);
@@ -35,6 +39,8 @@ public class DocumentoController {
             summary = "Lista de tipo de documento",
             description = "Obtiene todos los tipos de documento registrados"
     )
+    @PreAuthorize("hasRole('ADMIN', 'DIRECTIVO', 'APOYO')")
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<DocumentoResponseDTO>> list(){
         List<DocumentoResponseDTO> responseDTOS = documentoService.list();

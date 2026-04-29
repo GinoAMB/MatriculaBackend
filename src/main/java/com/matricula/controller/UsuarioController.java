@@ -6,9 +6,11 @@ import com.matricula.dto.usuario.RegisterRequestDTO;
 import com.matricula.dto.usuario.UsuarioResponseDTO;
 import com.matricula.service.usuario.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +28,8 @@ public class UsuarioController {
             summary = "Registrar un nuevo usuario",
             description = "Crea un nuevo usuario en el sistema"
     )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/register")
     public ResponseEntity<UsuarioResponseDTO> register(@RequestBody RegisterRequestDTO request) {
 
@@ -38,6 +42,8 @@ public class UsuarioController {
             summary = "Lista de usuarios",
             description = "Obtiene todos los usuarios registrados"
     )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/lista")
     public ResponseEntity<List<UsuarioResponseDTO>> list(){
         List<UsuarioResponseDTO> usuarios = usuarioService.list();

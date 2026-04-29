@@ -3,9 +3,11 @@ package com.matricula.controller;
 import com.matricula.dto.estado.EstadoResponseDTO;
 import com.matricula.service.estado.EstadoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +23,8 @@ public class EstadoController {
             summary = "Lista de Estado de Matriculas",
             description = "Obtiene todos los estados registrados"
     )
+    @PreAuthorize("hasRole('DIRECTIVO', 'APOYO')")
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<EstadoResponseDTO>> list(){
         List<EstadoResponseDTO> estadoResponseDTOS = estadoService.list();

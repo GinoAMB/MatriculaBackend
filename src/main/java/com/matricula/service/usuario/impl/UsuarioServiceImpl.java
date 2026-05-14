@@ -1,9 +1,7 @@
 package com.matricula.service.usuario.impl;
 
-import com.matricula.dto.usuario.AuthResponse;
-import com.matricula.dto.usuario.LoginRequestDTO;
-import com.matricula.dto.usuario.RegisterRequestDTO;
-import com.matricula.dto.usuario.UsuarioResponseDTO;
+import com.matricula.dto.common.PageResponseDTO;
+import com.matricula.dto.usuario.*;
 import com.matricula.entity.PersonaEntity;
 import com.matricula.entity.RolEntity;
 import com.matricula.entity.UsuarioEntity;
@@ -16,8 +14,11 @@ import com.matricula.repository.RolRepository;
 import com.matricula.repository.UsuarioRepository;
 import com.matricula.security.JwtUtil;
 import com.matricula.service.usuario.UsuarioService;
+import com.matricula.specification.UsuarioSpecification;
 import com.matricula.util.MessageConstants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UsuarioServiceImpl implements UsuarioService {
+public class  UsuarioServiceImpl implements UsuarioService {
 
     private final PersonaRepository personaRepository;
     private final RolRepository rolRepository;
@@ -100,11 +101,88 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public List<UsuarioResponseDTO> list() {
-        List<UsuarioEntity> usuarios = usuarioRepository.findAll();
-        return usuarios.stream()
+    public PageResponseDTO<UsuarioResponseDTO> list(
+            String search,
+            String rol,
+            Boolean estado,
+            Pageable pageable
+    ) {
+
+        Page<UsuarioEntity> usuariosPage = usuarioRepository.findAll(
+                UsuarioSpecification.filtrar(search, rol, estado),
+                pageable
+        );
+
+        List<UsuarioResponseDTO> usuarios = usuariosPage.getContent()
+                .stream()
                 .map(usuarioMapper::toResponseDTO)
                 .toList();
+
+        return new PageResponseDTO<>(
+                usuarios,
+                usuariosPage.getNumber(),
+                usuariosPage.getSize(),
+                usuariosPage.getTotalElements(),
+                usuariosPage.getTotalPages(),
+                usuariosPage.isFirst(),
+                usuariosPage.isLast()
+        );
+    }
+
+    @Override
+    public UsuarioResponseDTO changeStatus(Integer id) {
+        UsuarioEntity usuario = usuarioRepository.findById(id)
+                .orElseThrow(() ->
+                        new NotFoundException(MessageConstants.Usuario.NOT_FOUND)
+                );
+
+        usuario.setEstado(!usuario.getEstado());
+
+        usuario = usuarioRepository.save(usuario);
+
+        return usuarioMapper.toResponseDTO(usuario);
+    }
+
+    @Override
+    public UsuarioResponseDTO update(Integer id, UpdateUsuarioRequestDTO usuarioRequestDTO) {
+        // 1. Buscar usuario
+        UsuarioEntity usuario = usuarioRepository.findById(id)
+                .orElseThrow(() ->
+                        new NotFoundException(MessageConstants.Usuario.NOT_FOUND)
+                );
+
+        // 2. Validar correo repetido
+        if (!usuario.getCorreo().equals(usuarioRequestDTO.correo())
+                && usuarioRepository.existsByCorreo(usuarioRequestDTO.correo())) {
+
+            throw new BadRequestException(MessageConstants.Usuario.EMAIL_EXISTS);
+        }
+
+        // 3. Buscar rol
+        RolEntity rol = rolRepository.findById(usuarioRequestDTO.idRol())
+                .orElseThrow(() ->
+                        new NotFoundException(MessageConstants.Rol.NOT_FOUND)
+                );
+
+        // 4. Actualizar usuario
+        usuario.setCorreo(usuarioRequestDTO.correo());
+        usuario.setRol(rol);
+        usuario.setEstado(usuarioRequestDTO.estado());
+
+        // 5. Actualizar contraseña si viene
+        if (usuarioRequestDTO.password() != null && !usuarioRequestDTO.password().isBlank()) {
+            usuario.setPassword(passwordEncoder.encode(usuarioRequestDTO.password()));
+        }
+
+        // 6. Actualizar persona
+        usuario.getPersona().setNombre(usuarioRequestDTO.nombre());
+        usuario.getPersona().setApellidos(usuarioRequestDTO.apellidos());
+
+        // 7. Guardar
+        usuario = usuarioRepository.save(usuario);
+
+        // 8. Retornar
+        return usuarioMapper.toResponseDTO(usuario);
     }
 
 }

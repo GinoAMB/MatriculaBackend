@@ -1,19 +1,20 @@
 package com.matricula.controller;
 
-import com.matricula.dto.usuario.AuthResponse;
-import com.matricula.dto.usuario.LoginRequestDTO;
-import com.matricula.dto.usuario.RegisterRequestDTO;
-import com.matricula.dto.usuario.UsuarioResponseDTO;
+import com.matricula.dto.common.PageResponseDTO;
+import com.matricula.dto.usuario.*;
 import com.matricula.service.usuario.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -45,9 +46,18 @@ public class UsuarioController {
     @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/lista")
-    public ResponseEntity<List<UsuarioResponseDTO>> list(){
-        List<UsuarioResponseDTO> usuarios = usuarioService.list();
-        return ResponseEntity.ok(usuarios);
+    public ResponseEntity<PageResponseDTO<UsuarioResponseDTO>> list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String rol,
+            @RequestParam(required = false) Boolean estado
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return ResponseEntity.ok(
+                usuarioService.list(search, rol, estado, pageable)
+        );
     }
 
     // LOGIN (devuelve JWT + datos)
@@ -62,5 +72,38 @@ public class UsuarioController {
         AuthResponse response = usuarioService.login(request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Cambiar estado de usuario",
+            description = "Permite activar o desactivar un usuario del sistema."
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<UsuarioResponseDTO> changeStatus(
+            @PathVariable Integer id
+    ) {
+
+        return ResponseEntity.ok(
+                usuarioService.changeStatus(id)
+        );
+    }
+
+    @Operation(
+            summary = "Actualizar usuario",
+            description = "Permite actualizar la información de un usuario del sistema."
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDTO> update(
+            @PathVariable Integer id,
+            @Valid @RequestBody UpdateUsuarioRequestDTO request
+    ) {
+
+        return ResponseEntity.ok(
+                usuarioService.update(id, request)
+        );
     }
 }

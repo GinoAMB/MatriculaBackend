@@ -7,6 +7,7 @@ public class MessageConstants {
         public static final String INVALID_CREDENTIALS = "Credenciales inválidas";
         public static final String INACTIVE = "El usuario está inactivo";
         public static final String NOT_FOUND_OR_INACTIVE = "El correo no está registrado o el usuario está inactivo";
+        public static final String NOT_FOUND = "Usuario no encontrado";
     }
 
     public static class Rol {

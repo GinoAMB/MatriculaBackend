@@ -5,6 +5,8 @@ public record UsuarioResponseDTO(
          String nombres,
          String apellidos,
          String correo,
-         String rol
+         Integer idRol,
+         String rol,
+         Boolean estado
 ) {
 }

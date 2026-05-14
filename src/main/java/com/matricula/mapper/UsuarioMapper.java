@@ -49,7 +49,8 @@ public interface UsuarioMapper {
             @Mapping(target = "fechaNacimiento", ignore = true),
             @Mapping(target = "tipoDocumento", ignore = true),
             @Mapping(target = "religion", ignore = true),
-            @Mapping(target = "pais", ignore = true)
+            @Mapping(target = "pais", ignore = true),
+            @Mapping(target = "celular", ignore = true)
     })
     PersonaEntity toPersona(RegisterRequestDTO dto);
 
@@ -68,14 +69,16 @@ public interface UsuarioMapper {
     @Mappings({
             @Mapping(target = "idUsuario", source = "idUsuario"),
 
-            //acceder a datos dentro de persona
             @Mapping(target = "nombres", source = "persona.nombre"),
             @Mapping(target = "apellidos", source = "persona.apellidos"),
 
             @Mapping(target = "correo", source = "correo"),
 
-            //obtener nombre del rol
-            @Mapping(target = "rol", source = "rol.nombre")
+            @Mapping(target = "idRol", source = "rol.idRol"),
+
+            @Mapping(target = "rol", source = "rol.nombre"),
+
+            @Mapping(target = "estado", source = "estado")
     })
     UsuarioResponseDTO toResponseDTO(UsuarioEntity entity);
 }

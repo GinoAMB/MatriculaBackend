@@ -1,11 +1,8 @@
 package com.matricula.service.usuario;
 
-import com.matricula.dto.usuario.AuthResponse;
-import com.matricula.dto.usuario.LoginRequestDTO;
-import com.matricula.dto.usuario.RegisterRequestDTO;
-import com.matricula.dto.usuario.UsuarioResponseDTO;
-
-import java.util.List;
+import com.matricula.dto.common.PageResponseDTO;
+import com.matricula.dto.usuario.*;
+import org.springframework.data.domain.Pageable;
 
 public interface UsuarioService {
 
@@ -13,5 +10,14 @@ public interface UsuarioService {
 
     AuthResponse login(LoginRequestDTO request);
 
-    List<UsuarioResponseDTO> list();
+    PageResponseDTO<UsuarioResponseDTO> list(
+            String search,
+            String rol,
+            Boolean estado,
+            Pageable pageable
+    );
+
+    UsuarioResponseDTO changeStatus(Integer id);
+
+    UsuarioResponseDTO update(Integer id, UpdateUsuarioRequestDTO usuarioRequestDTO);
 }

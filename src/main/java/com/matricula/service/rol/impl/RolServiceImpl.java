@@ -2,8 +2,10 @@ package com.matricula.service.rol.impl;
 
 import com.matricula.dto.rol.RolRequestDTO;
 import com.matricula.dto.rol.RolResponseDTO;
+import com.matricula.dto.rol.RolUpdateRequestDTO;
 import com.matricula.entity.RolEntity;
 import com.matricula.exception.BadRequestException;
+import com.matricula.exception.NotFoundException;
 import com.matricula.mapper.RolMapper;
 import com.matricula.repository.RolRepository;
 import com.matricula.service.rol.RolService;
@@ -39,5 +41,28 @@ public class RolServiceImpl implements RolService {
         return roles.stream()
                 .map(rolMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public RolResponseDTO update(RolUpdateRequestDTO requestDTO) {
+
+        // Buscar rol existente
+        RolEntity rol = rolRepository.findById(requestDTO.idRol())
+                .orElseThrow(() ->
+                        new NotFoundException(MessageConstants.Rol.NOT_FOUND));
+
+        // Validar nombre duplicado
+        if (rolRepository.existsByNombreIgnoreCase(requestDTO.nombre())
+                && !rol.getNombre().equalsIgnoreCase(requestDTO.nombre())) {
+
+            throw new BadRequestException(MessageConstants.Rol.ALREADY_EXISTS);
+        }
+
+        // Actualizar entidad existente
+        rolMapper.updateEntityFromDto(requestDTO, rol);
+
+        RolEntity updated = rolRepository.save(rol);
+
+        return rolMapper.toDto(updated);
     }
 }

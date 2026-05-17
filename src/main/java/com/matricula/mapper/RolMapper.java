@@ -2,9 +2,11 @@ package com.matricula.mapper;
 
 import com.matricula.dto.rol.RolRequestDTO;
 import com.matricula.dto.rol.RolResponseDTO;
+import com.matricula.dto.rol.RolUpdateRequestDTO;
 import com.matricula.entity.RolEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface RolMapper {
@@ -15,4 +17,7 @@ public interface RolMapper {
 
     //Entity -> DTO
     RolResponseDTO toDto(RolEntity entity);
+
+    // Actualizar entidad existente
+    void updateEntityFromDto(RolUpdateRequestDTO dto, @MappingTarget RolEntity entity);
 }

@@ -2,6 +2,7 @@ package com.matricula.controller;
 
 import com.matricula.dto.rol.RolRequestDTO;
 import com.matricula.dto.rol.RolResponseDTO;
+import com.matricula.dto.rol.RolUpdateRequestDTO;
 import com.matricula.service.rol.RolService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -44,6 +45,21 @@ public class RolController {
     @GetMapping
     public ResponseEntity<List<RolResponseDTO>> list(){
         List<RolResponseDTO> response = rolService.list();
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Actualizar rol",
+            description = "Actualiza la información de un rol existente"
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/update")
+    public ResponseEntity<RolResponseDTO> update(
+            @RequestBody @Valid RolUpdateRequestDTO requestDTO) {
+
+        RolResponseDTO response = rolService.update(requestDTO);
+
         return ResponseEntity.ok(response);
     }
 }

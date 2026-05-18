@@ -2,8 +2,10 @@ package com.matricula.service.pais.impl;
 
 import com.matricula.dto.pais.PaisRequestDTO;
 import com.matricula.dto.pais.PaisResponseDTO;
+import com.matricula.dto.pais.PaisUpdateRequestDTO;
 import com.matricula.entity.PaisEntity;
 import com.matricula.exception.BadRequestException;
+import com.matricula.exception.NotFoundException;
 import com.matricula.mapper.PaisMapper;
 import com.matricula.repository.PaisRepository;
 import com.matricula.service.pais.PaisService;
@@ -40,5 +42,28 @@ public class PaisServiceImpl implements PaisService {
         return paises.stream()
                 .map(paisMapper::toDTO)
                 .toList();
+    }
+
+    @Override
+    public PaisResponseDTO update(PaisUpdateRequestDTO requestDTO) {
+
+        // Buscar pais existente
+        PaisEntity pais = paisRepository.findById(requestDTO.idPais())
+                .orElseThrow( () ->
+                        new NotFoundException(MessageConstants.Pais.NOT_FOUND));
+
+        // Validar nombre duplicado
+        if (paisRepository.existsByNombreIgnoreCase(requestDTO.nombre())
+                && !pais.getNombre().equalsIgnoreCase(requestDTO.nombre())) {
+
+            throw new BadRequestException(MessageConstants.Pais.ALREADY_EXISTS);
+        }
+
+        //Actulizar entidad existente
+        paisMapper.updateEntityFromDto(requestDTO, pais);
+
+        PaisEntity update = paisRepository.save(pais);
+
+        return paisMapper.toDTO(update);
     }
 }

@@ -2,6 +2,7 @@ package com.matricula.controller;
 
 import com.matricula.dto.pais.PaisRequestDTO;
 import com.matricula.dto.pais.PaisResponseDTO;
+import com.matricula.dto.pais.PaisUpdateRequestDTO;
 import com.matricula.service.pais.PaisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -39,11 +40,23 @@ public class PaisController {
             summary = "Lista de países",
             description = "Obtiene todos los países registrados"
     )
-    @PreAuthorize("hasRole('ADMIN', 'DIRECTIVO', 'APOYO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTIVO', 'APOYO')")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<PaisResponseDTO>> list(){
         List<PaisResponseDTO> paisResponseDTOS = paisService.list();
         return ResponseEntity.ok(paisResponseDTOS);
+    }
+
+    @Operation(
+            summary = "Actualizar pais",
+            description = "Actualiza la información de un pais existente"
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/update")
+    public ResponseEntity<PaisResponseDTO> update(@RequestBody @Valid PaisUpdateRequestDTO requestDTO){
+        PaisResponseDTO responseDTO = paisService.update(requestDTO);
+        return ResponseEntity.ok(responseDTO);
     }
 }

@@ -2,8 +2,11 @@ package com.matricula.service.documento.impl;
 
 import com.matricula.dto.documento.DocumentoRequestDTO;
 import com.matricula.dto.documento.DocumentoResponseDTO;
+import com.matricula.dto.documento.DocumentoUpdateRequestDTO;
 import com.matricula.entity.DocumentoEntity;
+import com.matricula.entity.PaisEntity;
 import com.matricula.exception.BadRequestException;
+import com.matricula.exception.NotFoundException;
 import com.matricula.mapper.DocumentoMapper;
 import com.matricula.repository.DocumentoRepository;
 import com.matricula.service.documento.DocumentoService;
@@ -39,5 +42,28 @@ public class DocumentoServiceImpl implements DocumentoService {
         return documentos.stream()
                 .map(documentoMapper::toDTO)
                 .toList();
+    }
+
+    @Override
+    public DocumentoResponseDTO update(DocumentoUpdateRequestDTO requestDTO) {
+
+        // Buscar pais existente
+        DocumentoEntity documento = documentoRepository.findById(requestDTO.idTipo())
+                .orElseThrow( () ->
+                        new NotFoundException(MessageConstants.Documento.NOT_FOUND));
+
+        // Validar nombre duplicado
+        if (documentoRepository.existsByNombreIgnoreCase(requestDTO.nombre())
+                && !documento.getNombre().equalsIgnoreCase(requestDTO.nombre())) {
+
+            throw new BadRequestException(MessageConstants.Documento.ALREADY_EXISTS);
+        }
+
+        //Actualizar entity existente
+        documentoMapper.updateEntityFromDto(requestDTO, documento);
+
+        DocumentoEntity update = documentoRepository.save(documento);
+
+        return documentoMapper.toDTO(update);
     }
 }

@@ -17,6 +17,7 @@ public class MessageConstants {
 
     public static class Documento {
         public static final String ALREADY_EXISTS = "El documento ya existe";
+        public static final String NOT_FOUND = "Documento no encontrado";
     }
 
     public static class Pais {

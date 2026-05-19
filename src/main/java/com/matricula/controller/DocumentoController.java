@@ -2,6 +2,7 @@ package com.matricula.controller;
 
 import com.matricula.dto.documento.DocumentoRequestDTO;
 import com.matricula.dto.documento.DocumentoResponseDTO;
+import com.matricula.dto.documento.DocumentoUpdateRequestDTO;
 import com.matricula.service.documento.DocumentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -39,11 +40,23 @@ public class DocumentoController {
             summary = "Lista de tipo de documento",
             description = "Obtiene todos los tipos de documento registrados"
     )
-    @PreAuthorize("hasRole('ADMIN', 'DIRECTIVO', 'APOYO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTIVO', 'APOYO')")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<DocumentoResponseDTO>> list(){
         List<DocumentoResponseDTO> responseDTOS = documentoService.list();
         return ResponseEntity.ok(responseDTOS);
+    }
+
+    @Operation(
+            summary = "Actualizar documento",
+            description = "Actualiza la información de un tipo de documento existente"
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/update")
+    public ResponseEntity<DocumentoResponseDTO> update(@RequestBody @Valid DocumentoUpdateRequestDTO requestDTO){
+        DocumentoResponseDTO responseDTO = documentoService.update(requestDTO);
+        return ResponseEntity.ok(responseDTO);
     }
 }

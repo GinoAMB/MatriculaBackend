@@ -23,7 +23,7 @@ public class EstadoController {
             summary = "Lista de Estado de Matriculas",
             description = "Obtiene todos los estados registrados"
     )
-    @PreAuthorize("hasRole('DIRECTIVO', 'APOYO')")
+    @PreAuthorize("hasAnyRole('DIRECTIVO', 'APOYO')")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<EstadoResponseDTO>> list(){

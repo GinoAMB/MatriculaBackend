@@ -27,6 +27,7 @@ public class MessageConstants {
 
     public static class Religion {
         public static final String ALREADY_EXISTS = "La Religion ya existe";
+        public static final String NOT_FOUND = "Religion no encontrado";
     }
 
     public static class PeriodoEscolar {

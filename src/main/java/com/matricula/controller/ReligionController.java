@@ -2,6 +2,7 @@ package com.matricula.controller;
 
 import com.matricula.dto.religion.ReligionRequestDTO;
 import com.matricula.dto.religion.ReligionResponseDTO;
+import com.matricula.dto.religion.ReligionUpdateRequestDTO;
 import com.matricula.service.religion.ReligionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -39,11 +40,23 @@ public class ReligionController {
             summary = "Lista de religiones",
             description = "Obtiene todas las religiones registradas"
     )
-    @PreAuthorize("hasRole('ADMIN', 'DIRECTIVO', 'APOYO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTIVO', 'APOYO')")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<ReligionResponseDTO>> list(){
         List<ReligionResponseDTO> religiones = religionService.list();
         return ResponseEntity.ok(religiones);
+    }
+
+    @Operation(
+            summary = "Actualizar religión",
+            description = "Actualiza la información de una religión existente"
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/update")
+    public ResponseEntity<ReligionResponseDTO> update(@RequestBody @Valid ReligionUpdateRequestDTO requestDTO){
+        ReligionResponseDTO responseDTO = religionService.update(requestDTO);
+        return ResponseEntity.ok(responseDTO);
     }
 }

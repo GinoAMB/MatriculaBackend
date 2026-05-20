@@ -32,6 +32,8 @@ public class MessageConstants {
 
     public static class PeriodoEscolar {
         public static final String ALREADY_EXISTS = "El periodo escolar ya existe";
+        public static final String NOT_FOUND = "Periodo escolar no encontrado";
+        public static final String PERIOD_FINISHED = "No se puede actualizar un periodo escolar finalizado";
     }
 
     public static class Token {

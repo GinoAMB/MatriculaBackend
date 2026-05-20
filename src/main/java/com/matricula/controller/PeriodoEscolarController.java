@@ -2,6 +2,7 @@ package com.matricula.controller;
 
 import com.matricula.dto.periodo_escolar.PeriodoRequestDTO;
 import com.matricula.dto.periodo_escolar.PeriodoResponseDTO;
+import com.matricula.dto.periodo_escolar.PeriodoUpdateRequestDTO;
 import com.matricula.service.periodo_escolar.PeriodoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -39,11 +40,27 @@ public class PeriodoEscolarController {
             summary = "Lista de periodos escolares",
             description = "Obtiene todos los periodos escolares registrados"
     )
-    @PreAuthorize("hasRole('DIRECTIVO', 'APOYO')")
+    @PreAuthorize("hasAnyRole('DIRECTIVO', 'APOYO')")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<PeriodoResponseDTO>> list(){
         List<PeriodoResponseDTO> periodoResponseDTOS = periodoService.list();
         return ResponseEntity.ok(periodoResponseDTOS);
+    }
+
+    @Operation(
+            summary = "Actualizar periodo escolar",
+            description = "Actualiza un periodo escolar existente"
+    )
+    @PreAuthorize("hasRole('DIRECTIVO')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/update")
+    public ResponseEntity<PeriodoResponseDTO> update(
+            @RequestBody @Valid PeriodoUpdateRequestDTO requestDTO) {
+
+        PeriodoResponseDTO responseDTO =
+                periodoService.update(requestDTO);
+
+        return ResponseEntity.ok(responseDTO);
     }
 }

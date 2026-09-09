@@ -17,5 +17,6 @@ public interface FamiliarMapper {
     @Mapping(target = "nombreInstitucionProcedencia", ignore = true)
     @Mapping(target = "tieneDiscapacidad", ignore = true)
     @Mapping(target = "descripcionDiscapacidad", ignore = true)
+    @Mapping(target = "relaciones", ignore = true)
     PersonaEntity toEntity(FamiliarBasicoRequestDTO dto);
 }

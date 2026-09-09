@@ -1,5 +1,6 @@
 package com.matricula.service.matricula.impl;
 
+import com.matricula.dto.common.PageResponseDTO;
 import com.matricula.dto.matricula.*;
 import com.matricula.entity.*;
 import com.matricula.exception.BadRequestException;
@@ -10,12 +11,17 @@ import com.matricula.mapper.MatriculaMapper;
 import com.matricula.mapper.PersonaMapper;
 import com.matricula.repository.*;
 import com.matricula.service.matricula.MatriculaService;
+import com.matricula.specification.MatriculaSpecification;
 import com.matricula.util.MessageConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -86,14 +92,56 @@ public class MatriculaServiceImpl implements MatriculaService {
         }
 
         //Response
-        return new AlumnoResponseDTO(
-                alumno.getIdPersona(),
-                alumno.getNombre(),
-                alumno.getApellidos(),
-                matricula.getSeccion().getGrado().getNivel().getNombre(),
-                matricula.getSeccion().getGrado().getNombre(),
-                matricula.getSeccion().getNombre()
+        return matriculaMapper.toAlumnoResponseDTO(matricula);
+    }
+
+
+    @Override
+    public PageResponseDTO<AlumnoResponseDTO> list(String search, String nivel, String grado, String seccion, Pageable pageable) {
+        Page<MatriculaEntity> matriculasPage = matriculaRepository.findAll(
+                MatriculaSpecification.filtrar(search,nivel,grado,seccion),
+                pageable
         );
+
+        List<AlumnoResponseDTO> matriculas = matriculasPage.getContent()
+                .stream()
+                .map(matriculaMapper::toAlumnoResponseDTO)
+                .toList();
+
+        return new PageResponseDTO<>(
+                matriculas,
+                matriculasPage.getNumber(),
+                matriculasPage.getSize(),
+                matriculasPage.getTotalElements(),
+                matriculasPage.getTotalPages(),
+                matriculasPage.isFirst(),
+                matriculasPage.isLast()
+        );
+    }
+
+    @Override
+    public AlumnoDetalleResponseDTO findById(Integer idMatricula) {
+        MatriculaEntity matricula = matriculaRepository.findById(idMatricula)
+                .orElseThrow(() ->
+                        new NotFoundException(MessageConstants.Matricula.NOT_FOUND)
+                );
+
+        return matriculaMapper.toDetalleResponseDTO(matricula);
+    }
+
+    @Override
+    public List<AlumnoPrintDTO> listarParaImpresion(String nivel, String grado, String seccion) {
+        List<MatriculaEntity> matriculas = matriculaRepository.findAll(
+                MatriculaSpecification.filtrar(null, nivel, grado, seccion)
+        );
+
+        return matriculas.stream()
+                .sorted(Comparator.comparing(
+                        m -> m.getAlumno().getApellidos(),
+                        String.CASE_INSENSITIVE_ORDER
+                ))
+                .map(matriculaMapper::toAlumnoPrintDTO)
+                .toList();
     }
 
     private void validarMatricula(MatriculaRequestDTO request) {

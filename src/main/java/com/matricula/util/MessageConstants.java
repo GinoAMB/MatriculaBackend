@@ -69,6 +69,8 @@ public class MessageConstants {
         public static final String SECCION_NOT_FOUND = "Sección no encontrada";
         public static final String PERIODO_NOT_FOUND = "Periodo no encontrado";
         public static final String ESTADO_NOT_FOUND = "Estado no encontrado";
+
+        public static final String NOT_FOUND = "Matricula no encontrado";
     }
 
     public static class Persona {

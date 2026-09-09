@@ -13,5 +13,6 @@ public interface PersonaMapper {
     @Mapping(target = "religion", ignore = true)
     @Mapping(target = "pais", ignore = true)
     @Mapping(target = "celular", ignore = true)
+    @Mapping(target = "relaciones", ignore = true)
     PersonaEntity toAlumnoEntity(AlumnoRequestDTO dto);
 }

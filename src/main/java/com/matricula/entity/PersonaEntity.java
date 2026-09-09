@@ -1,18 +1,12 @@
 package com.matricula.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "persona")
@@ -67,4 +61,7 @@ public class PersonaEntity {
     @ManyToOne
     @JoinColumn(name = "id_pais")
     private PaisEntity pais;
+
+    @OneToMany(mappedBy = "alumno")
+    private List<PersonaRelacionEntity> relaciones;
 }

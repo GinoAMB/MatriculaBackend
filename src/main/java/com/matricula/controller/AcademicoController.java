@@ -27,7 +27,7 @@ public class AcademicoController {
             summary = "Listar estructura académica",
             description = "Obtiene niveles con sus grados y secciones"
     )
-    @PreAuthorize("hasRole('DIRECTIVO', 'APOYO')")
+    @PreAuthorize("hasAnyRole('DIRECTIVO', 'APOYO')")
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/niveles")
     public ResponseEntity<List<NivelResponseDTO>> listarEstructura() {
@@ -39,7 +39,7 @@ public class AcademicoController {
             summary = "Registrar una nueva sección",
             description = "Crea una nueva sección asociada a un grado y nivel"
     )
-    @PreAuthorize("hasRole('DIRECTIVO', 'APOYO')")
+    @PreAuthorize("hasAnyRole('DIRECTIVO', 'APOYO')")
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/secciones")
     public ResponseEntity<Void> registrarSeccion(
